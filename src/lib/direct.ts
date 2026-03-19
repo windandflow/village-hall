@@ -73,6 +73,57 @@ export async function listInviteRequests(stateId: string) {
 
 // TODO: 통계 집계 쿼리 (SDK 업데이트 후 교체)
 
+// ─── Auth: Entity Sync ───────────────────────────────────────────────────────
+
+export async function findOrCreateEntity(params: {
+  displayName: string;
+  authProvider: string;
+  authProviderId: string;
+  email?: string;
+}): Promise<{ entity_id: string; display_name: string } | null> {
+  const client = getAnonClient();
+
+  // 1. auth_methods에서 기존 entity 조회
+  const { data: authMethod } = await client
+    .from('auth_methods')
+    .select('entity_id')
+    .eq('provider', params.authProvider)
+    .eq('provider_user_id', params.authProviderId)
+    .single();
+
+  if (authMethod) {
+    // 기존 entity 반환
+    const { data: entity } = await client
+      .from('entities')
+      .select('entity_id, display_name')
+      .eq('entity_id', authMethod.entity_id)
+      .single();
+    return entity as { entity_id: string; display_name: string } | null;
+  }
+
+  // 2. 신규 entity 생성
+  const { data: newEntity, error: entityError } = await client
+    .from('entities')
+    .insert({
+      display_name: params.displayName,
+      entity_type: 'human',
+    })
+    .select('entity_id, display_name')
+    .single();
+
+  if (entityError || !newEntity) return null;
+
+  // 3. auth_method 연결
+  await client.from('auth_methods').insert({
+    entity_id: newEntity.entity_id,
+    provider: params.authProvider,
+    provider_user_id: params.authProviderId,
+    email: params.email,
+  });
+
+  return newEntity as { entity_id: string; display_name: string };
+}
+
 // ─── Slug Lookup ─────────────────────────────────────────────────────────────
 
 export async function getEntityBySlug(slug: string) {

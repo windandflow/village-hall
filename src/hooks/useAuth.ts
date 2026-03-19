@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { wf } from '@/lib/wf';
+import { findOrCreateEntity } from '@/lib/direct';
 
 interface AuthState {
   entityId: string | null;
@@ -12,7 +12,7 @@ interface AuthState {
 
 /**
  * Privy 로그인 상태를 감지하고, entity가 없으면 자동 생성.
- * 로그인 → auth_methods에서 entity 조회 → 없으면 createEntity.
+ * direct.ts를 사용 (SDK에 getEntityByAuthProvider 추가 전까지).
  */
 export function useAuth(): AuthState & {
   login: () => void;
@@ -38,30 +38,15 @@ export function useAuth(): AuthState & {
 
     async function syncEntity() {
       try {
-        // Privy user ID로 entity 조회/생성
         const privyUserId = user!.id;
         const email = user!.email?.address;
 
-        // SDK를 통해 entity 조회 시도
-        // auth_methods 테이블에서 privy provider로 조회
-        // SDK에 아직 이 기능이 없으므로 직접 생성 시도
-        // (이미 있으면 unique constraint로 실패 → 조회로 fallback)
-
-        let entity: { entity_id: string; display_name: string } | null = null;
-        try {
-          const result = await wf.identity.createEntity({
-            displayName: email?.split('@')[0] || 'New Member',
-            entityType: 'human',
-            authProvider: 'privy',
-            authProviderId: privyUserId,
-            email: email,
-          });
-          entity = result as { entity_id: string; display_name: string };
-        } catch {
-          // Entity already exists — 정상적인 경우
-          // TODO: SDK에 getEntityByAuthProvider 추가 후 교체
-          entity = null;
-        }
+        const entity = await findOrCreateEntity({
+          displayName: email?.split('@')[0] || 'New Member',
+          authProvider: 'privy',
+          authProviderId: privyUserId,
+          email: email,
+        });
 
         if (!cancelled) {
           setState({
