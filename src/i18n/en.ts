@@ -66,6 +66,34 @@ export const en: Record<MessageKey, string> = {
   'footer.newmoon': 'New Moon Village',
   'footer.github': 'GitHub',
 
+  // About
+  'about.title': 'About',
+  'about.manifesto.label': 'Manifesto',
+  'about.manifesto.title': 'Free as the wind, flowing like water.',
+  'about.manifesto.p1':
+    'In this land there is a profound Way called Pungryudo. It embraces the three teachings and benefits all living beings with love.',
+  'about.manifesto.p2':
+    'We rewrite this Pungryudo in the language of the digital age.',
+  'about.manifesto.p3':
+    'Using each other as mirrors, we first look within ourselves. We listen with respect and speak with love.',
+  'about.manifesto.p4': 'Governance begins when we truly see one another.',
+
+  'about.protocol.label': 'Recognition Protocol',
+  'about.protocol.description':
+    'Every mechanism in W&F is built upon a single verb: to see. We see existence, we see stories, we see contributions.',
+  'about.protocol.detail': 'Details: Coming soon',
+
+  'about.wfos.label': 'W&F OS',
+  'about.wfos.description':
+    'An open-source framework for network states. Seven domains: Identity, Membership, Relationship, Activity, Economy, Governance, Anchor.',
+  'about.wfos.detail': 'Details: Coming soon',
+
+  'about.contribute.label': 'Contribute',
+  'about.contribute.description':
+    'W&F is open source. You can contribute through code, design, translation, documentation, and more.',
+
+  'about.cta': 'If you share these values, request an invite',
+
   // Theme
   'theme.light': 'Sun',
   'theme.dark': 'Moon',

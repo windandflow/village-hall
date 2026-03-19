@@ -64,6 +64,34 @@ export const ko = {
   'footer.newmoon': '달뜨는마을',
   'footer.github': 'GitHub',
 
+  // About
+  'about.title': '소개',
+  'about.manifesto.label': 'Manifesto',
+  'about.manifesto.title': '바람처럼 자유롭게, 물처럼 흐르며.',
+  'about.manifesto.p1':
+    '이 나라에는 현묘한 도가 있다. 풍류라 한다. 유불선 삼교를 포함하고 뭇 생명을 사랑으로 이롭게 한다.',
+  'about.manifesto.p2':
+    '우리는 이 풍류도를 디지털 시대의 언어로 다시 쓴다.',
+  'about.manifesto.p3':
+    '서로를 거울삼아, 나 자신을 먼저 들여다 본다. 존중하는 마음으로 듣고, 사랑하는 마음으로 말한다.',
+  'about.manifesto.p4': '거버넌스는 우리가 서로를 볼 때 시작된다.',
+
+  'about.protocol.label': 'Recognition Protocol',
+  'about.protocol.description':
+    'W&F의 모든 메커니즘은 하나의 동사 위에 세워집니다: 보다(to see). 존재를 보고, 이야기를 보고, 기여를 봅니다.',
+  'about.protocol.detail': '상세: 준비 중',
+
+  'about.wfos.label': 'W&F OS',
+  'about.wfos.description':
+    '네트워크 국가를 위한 오픈소스 프레임워크. Identity, Membership, Relationship, Activity, Economy, Governance, Anchor 7도메인.',
+  'about.wfos.detail': '상세: 준비 중',
+
+  'about.contribute.label': 'Contribute',
+  'about.contribute.description':
+    'W&F는 오픈소스입니다. 코드, 디자인, 번역, 문서 등으로 기여할 수 있습니다.',
+
+  'about.cta': '이 가치에 동의하신다면, 초대를 신청하세요',
+
   // Theme
   'theme.light': '햇님',
   'theme.dark': '달님',
