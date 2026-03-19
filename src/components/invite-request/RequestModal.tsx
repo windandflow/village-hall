@@ -26,7 +26,9 @@ export function RequestModal({ trigger }: RequestModalProps) {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [region, setRegion] = useState('');
   const [reason, setReason] = useState('');
+  const [consent, setConsent] = useState(false);
 
   function validate() {
     const errs: Record<string, string> = {};
@@ -34,6 +36,7 @@ export function RequestModal({ trigger }: RequestModalProps) {
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       errs.email = t('request.validation.email');
     if (!reason.trim()) errs.reason = t('request.validation.reason');
+    if (!consent) errs.consent = t('request.validation.consent');
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -55,12 +58,13 @@ export function RequestModal({ trigger }: RequestModalProps) {
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (!next) {
-      // reset on close
       setStatus('idle');
       setErrors({});
       setName('');
       setEmail('');
+      setRegion('');
       setReason('');
+      setConsent(false);
     }
   }
 
@@ -83,8 +87,13 @@ export function RequestModal({ trigger }: RequestModalProps) {
 
         {status === 'success' ? (
           <div className="py-6 text-center">
-            <div className="mb-3 text-3xl">✅</div>
-            <p className="text-sm text-wf-text-light">{t('request.success')}</p>
+            <div className="mb-3 text-3xl">🕊️</div>
+            <h3 className="mb-2 font-semibold text-wf-navy">
+              {t('request.success_title')}
+            </h3>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-wf-text-light">
+              {t('request.success')}
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -116,16 +125,44 @@ export function RequestModal({ trigger }: RequestModalProps) {
             </div>
 
             <div>
+              <Label htmlFor="req-region">{t('request.region')}</Label>
+              <Input
+                id="req-region"
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                placeholder={t('request.region_placeholder')}
+              />
+            </div>
+
+            <div>
               <Label htmlFor="req-reason">{t('request.reason')}</Label>
               <Textarea
                 id="req-reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder={t('request.reason_placeholder')}
-                rows={4}
+                rows={3}
               />
               {errors.reason && (
                 <p className="mt-1 text-xs text-red-500">{errors.reason}</p>
+              )}
+            </div>
+
+            {/* 동의 체크박스 */}
+            <div className="rounded-lg bg-wf-cream p-4 dark:bg-[#0F1F2E]">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 accent-wf-celadon"
+                />
+                <span className="text-sm leading-relaxed text-wf-text">
+                  {t('request.consent')}
+                </span>
+              </label>
+              {errors.consent && (
+                <p className="mt-2 text-xs text-red-500">{errors.consent}</p>
               )}
             </div>
 
