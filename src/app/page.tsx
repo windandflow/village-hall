@@ -15,31 +15,38 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero — Navy gradient */}
-      <section className="bg-gradient-to-br from-wf-navy to-[#2A5A7A] px-6 py-20 text-center text-white md:py-28 dark:from-[#0A1628] dark:to-[#122240]">
-        <h1 className="text-3xl font-light tracking-[0.15em] md:text-5xl">
-          {t('landing.hero.title')}
-        </h1>
-        <p className="mt-2 text-sm tracking-widest text-white/50">
-          {t('common.tagline')}
-        </p>
-        <p className="mx-auto mt-6 max-w-xs whitespace-pre-line text-sm leading-relaxed text-white/80 md:max-w-md md:text-base">
-          {t('landing.hero.description')}
-        </p>
-        <p className="mt-3 text-xs text-white/40">{t('common.philosophy')}</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/about"
-            className="rounded-[10px] border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
-          >
-            {t('landing.hero.manifesto')}
-          </Link>
-          <Link
-            href="/sodo/newmoon"
-            className="rounded-[10px] bg-wf-celadon px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
-          >
-            {t('common.request_invite_long')}
-          </Link>
+      {/* Hero — Background image + overlay */}
+      <section className="relative bg-wf-navy px-6 py-24 text-center text-white md:py-36">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/hero1.png')" }}
+        />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
+        <div className="relative z-10">
+          <h1 className="text-3xl font-light tracking-[0.15em] md:text-5xl">
+            {t('landing.hero.title')}
+          </h1>
+          <p className="mt-2 text-sm tracking-widest text-white/50">
+            {t('common.tagline')}
+          </p>
+          <p className="mx-auto mt-6 max-w-xs whitespace-pre-line text-sm leading-relaxed text-white/80 md:max-w-md md:text-base">
+            {t('landing.hero.description')}
+          </p>
+          <p className="mt-3 text-xs text-white/40">{t('common.philosophy')}</p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/about"
+              className="rounded-[10px] border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            >
+              {t('landing.hero.manifesto')}
+            </Link>
+            <Link
+              href="/sodo/newmoon"
+              className="rounded-[10px] bg-wf-celadon px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+            >
+              {t('common.request_invite_long')}
+            </Link>
+          </div>
         </div>
       </section>
 
