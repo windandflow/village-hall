@@ -101,6 +101,23 @@ export const en: Record<MessageKey, string> = {
   'events.no_upcoming': 'No upcoming events.',
   'events.no_past': 'No past events.',
 
+  // Invite Request Modal
+  'request.title': 'Request an Invite',
+  'request.description': 'You can apply without an existing invitation.\nAn admin will review and contact you.',
+  'request.name': 'Name',
+  'request.name_placeholder': 'John Doe',
+  'request.email': 'Email',
+  'request.email_placeholder': 'hello@example.com',
+  'request.reason': 'Reason',
+  'request.reason_placeholder': 'Tell us why you want to join Wind & Flow.',
+  'request.submit': 'Submit',
+  'request.submitting': 'Submitting...',
+  'request.success': 'Your request has been submitted! We will review and get back to you.',
+  'request.error': 'Something went wrong. Please try again.',
+  'request.validation.name': 'Please enter your name.',
+  'request.validation.email': 'Please enter a valid email.',
+  'request.validation.reason': 'Please tell us your reason.',
+
   // Theme
   'theme.light': 'Sun',
   'theme.dark': 'Moon',

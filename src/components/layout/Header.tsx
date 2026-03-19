@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { useTheme } from '@/components/providers/ThemeProvider';
+import { RequestModal } from '@/components/invite-request/RequestModal';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,6 +61,8 @@ export function Header() {
           >
             {theme === 'light' ? '🌙' : '☀️'}
           </button>
+
+          <RequestModal />
 
           <Link
             href="/my"

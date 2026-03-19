@@ -99,6 +99,23 @@ export const ko = {
   'events.no_upcoming': '예정된 이벤트가 없습니다.',
   'events.no_past': '지난 이벤트가 없습니다.',
 
+  // Invite Request Modal
+  'request.title': '초대 신청',
+  'request.description': '기존 구성원의 초대 없이도 신청할 수 있습니다.\n관리자가 검토 후 연락드립니다.',
+  'request.name': '이름',
+  'request.name_placeholder': '홍길동',
+  'request.email': '이메일',
+  'request.email_placeholder': 'hello@example.com',
+  'request.reason': '신청 사유',
+  'request.reason_placeholder': 'Wind & Flow에 참여하고 싶은 이유를 알려주세요.',
+  'request.submit': '신청하기',
+  'request.submitting': '신청 중...',
+  'request.success': '신청이 완료되었습니다! 검토 후 연락드리겠습니다.',
+  'request.error': '오류가 발생했습니다. 다시 시도해주세요.',
+  'request.validation.name': '이름을 입력해주세요.',
+  'request.validation.email': '올바른 이메일을 입력해주세요.',
+  'request.validation.reason': '신청 사유를 입력해주세요.',
+
   // Theme
   'theme.light': '햇님',
   'theme.dark': '달님',
