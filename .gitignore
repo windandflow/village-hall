@@ -34,7 +34,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# fonts (binary, download manually)
-/public/fonts/*.woff2
-/public/fonts/*.woff
-/public/fonts/*.ttf
+# fonts — PretendardVariable.woff2 is tracked (2MB, self-hosted)
