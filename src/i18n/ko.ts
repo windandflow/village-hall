@@ -92,6 +92,13 @@ export const ko = {
 
   'about.cta': '이 가치에 동의하신다면, 초대를 신청하세요',
 
+  // Events
+  'events.title': '이벤트',
+  'events.upcoming': '다가오는 이벤트',
+  'events.past': '지난 이벤트',
+  'events.no_upcoming': '예정된 이벤트가 없습니다.',
+  'events.no_past': '지난 이벤트가 없습니다.',
+
   // Theme
   'theme.light': '햇님',
   'theme.dark': '달님',

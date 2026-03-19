@@ -94,6 +94,13 @@ export const en: Record<MessageKey, string> = {
 
   'about.cta': 'If you share these values, request an invite',
 
+  // Events
+  'events.title': 'Events',
+  'events.upcoming': 'Upcoming Events',
+  'events.past': 'Past Events',
+  'events.no_upcoming': 'No upcoming events.',
+  'events.no_past': 'No past events.',
+
   // Theme
   'theme.light': 'Sun',
   'theme.dark': 'Moon',
