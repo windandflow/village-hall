@@ -2,41 +2,105 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-wf-border bg-wf-warm">
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <div className="flex flex-col gap-8 md:flex-row md:justify-between">
-          {/* 브랜드 */}
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium tracking-widest text-wf-text">
-              wind &amp; flow
-            </span>
-            <p className="max-w-xs text-xs leading-relaxed text-wf-text-faint">
-              관계 인구와 지역을 잇는 네트워크 스테이트.
-              <br />첫 번째 소도: 달뜨는마을, 인제 신월리.
-            </p>
+    <footer className="bg-wf-navy px-6 py-14 text-wf-warm">
+      <div className="mx-auto max-w-5xl">
+        {/* Links grid */}
+        <div className="mb-10">
+          <div className="mb-6 text-sm font-bold italic text-wf-gold">
+            W&amp;F Network
           </div>
-
-          {/* 링크 */}
-          <div className="flex gap-10 text-sm">
-            <div className="flex flex-col gap-2">
-              <span className="font-medium text-wf-text-light">서비스</span>
-              <Link href="/about" className="text-wf-text-faint hover:text-wf-text">소개</Link>
-              <Link href="/events" className="text-wf-text-faint hover:text-wf-text">이벤트</Link>
-              <Link href="/nim" className="text-wf-text-faint hover:text-wf-text">구성원</Link>
-              <Link href="/sodo" className="text-wf-text-faint hover:text-wf-text">소도</Link>
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            <div className="space-y-2.5">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-wf-celadon">
+                Network
+              </h4>
+              <ul className="space-y-2 text-xs text-wf-warm/60">
+                <li>
+                  <Link href="/about" className="transition-colors hover:text-wf-celadon">
+                    Manifesto
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="transition-colors hover:text-wf-celadon">
+                    Protocol
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="transition-colors hover:text-wf-celadon">
+                    W&amp;F OS
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-medium text-wf-text-light">참여</span>
-              <Link href="/sodo/newmoon" className="text-wf-text-faint hover:text-wf-text">달뜨는마을</Link>
-              <Link href="/onboarding/sign" className="text-wf-text-faint hover:text-wf-text">서명하기</Link>
-              <Link href="/my/invite" className="text-wf-text-faint hover:text-wf-text">초대하기</Link>
+            <div className="space-y-2.5">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-wf-celadon">
+                Community
+              </h4>
+              <ul className="space-y-2 text-xs text-wf-warm/60">
+                <li>
+                  <Link href="/events" className="transition-colors hover:text-wf-celadon">
+                    이벤트
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/nim" className="transition-colors hover:text-wf-celadon">
+                    구성원
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/sodo" className="transition-colors hover:text-wf-celadon">
+                    소도
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-2.5">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-wf-celadon">
+                Projects
+              </h4>
+              <ul className="space-y-2 text-xs text-wf-warm/60">
+                <li>
+                  <Link
+                    href="/sodo/newmoon"
+                    className="transition-colors hover:text-wf-celadon"
+                  >
+                    달뜨는마을
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-2.5">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-wf-celadon">
+                Open Source
+              </h4>
+              <ul className="space-y-2 text-xs text-wf-warm/60">
+                <li>
+                  <a
+                    href="https://github.com/windandflow"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-wf-celadon"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-1 border-t border-wf-border pt-6 text-xs text-wf-text-faint md:flex-row md:justify-between">
-          <span>© 2026 Wind &amp; Flow. All rights reserved.</span>
-          <span>windandflow.xyz</span>
+        {/* Bottom */}
+        <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-6">
+          <p className="text-center text-xs italic text-wf-warm/30">
+            &ldquo;바람처럼 자유롭게, 물처럼 흐르며&rdquo;
+          </p>
+          <div className="flex gap-4 text-[10px] text-wf-warm/40">
+            <span>개인정보처리방침</span>
+            <span>이용약관</span>
+          </div>
+          <p className="text-[10px] tracking-wider text-wf-warm/30">
+            © 2026 Wind &amp; Flow. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

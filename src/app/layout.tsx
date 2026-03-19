@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import { Providers } from '@/components/providers/Providers';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -43,9 +44,11 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.variable}>
       <body className="flex min-h-screen flex-col bg-wf-warm text-wf-text antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

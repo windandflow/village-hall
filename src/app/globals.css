@@ -1,21 +1,36 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #FAF8F5;
-  --foreground: #2C3E3C;
-}
+@custom-variant dark (&:is(.dark *));
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f0f0f;
-    --foreground: #ededed;
-  }
+@theme inline {
+  /* 공식 브랜드 팔레트 */
+  --color-wf-black: #000000;
+  --color-wf-gray-light: #CDD9D4;
+  --color-wf-gray-blue: #D7D5CD;
+
+  /* 디지털 확장 팔레트 */
+  --color-wf-navy: #1B3A5C;
+  --color-wf-celadon: #6BA3A0;
+  --color-wf-cream: #F5F9F8;
+  --color-wf-warm: #FAF8F5;
+  --color-wf-gold: #C4A265;
+  --color-wf-border: #E0E8E6;
+  --color-wf-text: #2C3E3C;
+  --color-wf-text-light: #7A8A87;
+  --color-wf-text-faint: #A8B5B2;
+
+  /* Font */
+  --font-sans: var(--font-pretendard), system-ui, sans-serif;
+
+  /* shadcn/ui radius */
+  --radius: 0.625rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-pretendard), system-ui, sans-serif;
+  background: var(--color-wf-warm);
+  color: var(--color-wf-text);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
