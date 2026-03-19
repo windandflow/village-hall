@@ -3,16 +3,20 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-
-const NAV_LINKS = [
-  { href: '/about', label: '소개' },
-  { href: '/events', label: '이벤트' },
-  { href: '/nim', label: '구성원' },
-  { href: '/sodo', label: '소도' },
-];
+import { useLocale } from '@/components/providers/LocaleProvider';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { locale, setLocale, t } = useLocale();
+  const { theme, toggleTheme } = useTheme();
+
+  const NAV_LINKS = [
+    { href: '/about', labelKey: 'nav.about' as const },
+    { href: '/events', labelKey: 'nav.events' as const },
+    { href: '/nim', labelKey: 'nav.members' as const },
+    { href: '/sodo', labelKey: 'nav.sodo' as const },
+  ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-wf-border bg-wf-warm/90 backdrop-blur-sm">
@@ -34,35 +38,75 @@ export function Header() {
               href={link.href}
               className="text-sm text-wf-text-light transition-colors hover:text-wf-text"
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
+
+          {/* 언어 토글 */}
+          <button
+            onClick={() => setLocale(locale === 'ko' ? 'en' : 'ko')}
+            className="rounded-md px-2 py-1 text-xs font-medium text-wf-text-light transition-colors hover:bg-wf-cream hover:text-wf-text"
+            aria-label="Toggle language"
+          >
+            {locale === 'ko' ? 'EN' : '한'}
+          </button>
+
+          {/* 테마 토글 */}
+          <button
+            onClick={toggleTheme}
+            className="rounded-md px-2 py-1 text-sm transition-colors hover:bg-wf-cream"
+            aria-label={theme === 'light' ? t('theme.dark') : t('theme.light')}
+            title={theme === 'light' ? t('theme.dark') : t('theme.light')}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+
           <Link
             href="/my"
             className="rounded-full bg-wf-navy px-4 py-1.5 text-sm text-white transition-opacity hover:opacity-80"
           >
-            내 여권
+            {t('common.my_passport')}
           </Link>
         </nav>
 
-        {/* 모바일 햄버거 */}
-        <button
-          className="flex items-center justify-center md:hidden"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
-        >
-          {menuOpen ? (
-            <X className="h-5 w-5 text-wf-text" />
-          ) : (
-            <Menu className="h-5 w-5 text-wf-text" />
-          )}
-        </button>
+        {/* 모바일 우측 */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* 언어 토글 */}
+          <button
+            onClick={() => setLocale(locale === 'ko' ? 'en' : 'ko')}
+            className="rounded-md px-2 py-1 text-xs font-medium text-wf-text-light"
+          >
+            {locale === 'ko' ? 'EN' : '한'}
+          </button>
+
+          {/* 테마 토글 */}
+          <button
+            onClick={toggleTheme}
+            className="rounded-md px-1 py-1 text-sm"
+            aria-label={theme === 'light' ? t('theme.dark') : t('theme.light')}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+
+          {/* 햄버거 */}
+          <button
+            className="flex items-center justify-center"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? t('nav.menu_close') : t('nav.menu_open')}
+          >
+            {menuOpen ? (
+              <X className="h-5 w-5 text-wf-text" />
+            ) : (
+              <Menu className="h-5 w-5 text-wf-text" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 모바일 드롭다운 */}
       {menuOpen && (
         <div className="border-t border-wf-border bg-wf-warm md:hidden">
-          <nav className="flex flex-col px-4 py-4 gap-1">
+          <nav className="flex flex-col gap-1 px-4 py-4">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -70,7 +114,7 @@ export function Header() {
                 className="py-2 text-sm text-wf-text-light hover:text-wf-text"
                 onClick={() => setMenuOpen(false)}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
             <Link
@@ -78,7 +122,7 @@ export function Header() {
               className="mt-2 rounded-full bg-wf-navy px-4 py-2 text-center text-sm text-white"
               onClick={() => setMenuOpen(false)}
             >
-              내 여권
+              {t('common.my_passport')}
             </Link>
           </nav>
         </div>

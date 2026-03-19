@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* 공식 브랜드 팔레트 */
+  /* 공식 브랜드 팔레트 — 햇님 (Light) 기본값 */
   --color-wf-black: #000000;
   --color-wf-gray-light: #CDD9D4;
   --color-wf-gray-blue: #D7D5CD;
@@ -27,10 +27,31 @@
   --radius: 0.625rem;
 }
 
+/* ── 햇님 (Light) ── */
 body {
   background: var(--color-wf-warm);
   color: var(--color-wf-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── 달님 (Dark) ── */
+.dark {
+  --color-wf-cream: #0F1F2E;
+  --color-wf-warm: #0A1628;
+  --color-wf-border: #1E3450;
+  --color-wf-text: #D8E4E2;
+  --color-wf-text-light: #8FA5A2;
+  --color-wf-text-faint: #5A7370;
+  --color-wf-navy: #8BB8E8;
+  --color-wf-celadon: #8CCBC8;
+  --color-wf-gold: #E0C87A;
+}
+
+.dark body,
+html.dark body {
+  background: var(--color-wf-warm);
+  color: var(--color-wf-text);
 }
