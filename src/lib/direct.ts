@@ -360,7 +360,7 @@ export async function listNims(stateId: string) {
   const client = getAnonClient();
   const { data: visas, error } = await client
     .from('visas')
-    .select('entity_id, level, entities(entity_id, display_name, slug, bio)')
+    .select('entity_id, level, entities!visas_entity_id_fkey(entity_id, display_name, slug, bio)')
     .eq('state_id', stateId)
     .eq('status', 'active')
     .order('created_at', { ascending: true });
@@ -410,7 +410,7 @@ export async function listMembers(stateId: string) {
   const client = getServiceClient();
   const { data: visas, error } = await client
     .from('visas')
-    .select('entity_id, level, created_at, entities(entity_id, display_name, slug, bio)')
+    .select('entity_id, level, created_at, entities!visas_entity_id_fkey(entity_id, display_name, slug, bio)')
     .eq('state_id', stateId)
     .eq('status', 'active')
     .order('created_at', { ascending: true });
