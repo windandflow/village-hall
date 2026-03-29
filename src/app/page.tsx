@@ -15,34 +15,49 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero — Background image + overlay */}
-      <section className="relative bg-wf-navy px-6 py-24 text-center text-white md:py-36">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero1.png')" }}
-        />
-        <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
-        <div className="relative z-10">
-          <h1 className="text-3xl font-light tracking-[0.15em] md:text-5xl">
-            {t('landing.hero.title')}
+      {/* Hero — Fullscreen video + cinematic typography */}
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[hsl(201,100%,13%)] text-white">
+        {/* Background video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 z-0 h-full w-full object-cover"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center px-6 pb-40 pt-32 text-center">
+          <h1 className="animate-fade-rise max-w-4xl text-5xl font-normal leading-[0.95] tracking-[-2.46px] text-white sm:text-7xl md:text-8xl">
+            {t('landing.hero.cinematic_pre')}
+            <em className="not-italic text-white/50">
+              {t('landing.hero.cinematic_em')}
+            </em>
           </h1>
-          <p className="mt-2 text-sm tracking-widest text-white/50">
-            {t('common.tagline')}
-          </p>
-          <p className="mx-auto mt-6 max-w-xs whitespace-pre-line text-sm leading-relaxed text-white/80 md:max-w-md md:text-base">
+
+          <p className="animate-fade-rise-delay mx-auto mt-8 max-w-2xl text-base leading-relaxed text-white/50 sm:text-lg">
             {t('landing.hero.description')}
           </p>
-          <p className="mt-3 text-xs text-white/40">{t('common.philosophy')}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+
+          <p className="animate-fade-rise-delay mt-3 text-xs tracking-widest text-white/30">
+            {t('common.philosophy')}
+          </p>
+
+          <div className="animate-fade-rise-delay-2 mt-12 flex flex-wrap justify-center gap-4">
             <Link
               href="/about"
-              className="rounded-[10px] border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              className="liquid-glass rounded-full px-8 py-4 text-sm text-white transition-transform hover:scale-[1.03]"
             >
               {t('landing.hero.manifesto')}
             </Link>
             <Link
               href="/sodo/newmoon"
-              className="rounded-[10px] bg-wf-celadon px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+              className="liquid-glass rounded-full bg-wf-celadon/20 px-8 py-4 text-sm text-white transition-transform hover:scale-[1.03]"
             >
               {t('common.request_invite_long')}
             </Link>

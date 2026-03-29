@@ -25,6 +25,8 @@ export const en: Record<MessageKey, string> = {
 
   // Landing — Hero
   'landing.hero.title': 'WIND & FLOW',
+  'landing.hero.cinematic_pre': 'Free as the wind, ',
+  'landing.hero.cinematic_em': 'flowing like water.',
   'landing.hero.description':
     'A digital Sodo network for a new era.\nWe dream of freer, quieter connections.',
   'landing.hero.manifesto': 'Manifesto',

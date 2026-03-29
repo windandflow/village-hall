@@ -23,6 +23,8 @@ export const ko = {
 
   // Landing — Hero
   'landing.hero.title': 'WIND & FLOW',
+  'landing.hero.cinematic_pre': '바람처럼 자유롭게, ',
+  'landing.hero.cinematic_em': '물처럼 흐르며.',
   'landing.hero.description':
     '새로운 시대를 여는 디지털 소도(蘇塗) 네트워크.\n우리는 더 자유롭고 고요한 연결을 꿈꿉니다.',
   'landing.hero.manifesto': '매니페스토',
