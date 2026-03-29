@@ -28,7 +28,13 @@ export default function SodoListPage() {
   return (
     <div className="flex flex-1 flex-col px-4 py-14">
       <div className="mx-auto w-full max-w-3xl">
-        <h1 className="mb-6 text-lg font-bold text-wf-navy">{t('sodo.title')}</h1>
+        {/* 미니 히어로 */}
+        <div className="mb-8 rounded-[10px] bg-wf-navy p-8 text-center text-white">
+          <h1 className="text-2xl font-bold">{t('sodo.title')}</h1>
+          <p className="mt-2 text-sm text-white/60">
+            {t('sodo.hero_description')}
+          </p>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           {SODO_LIST.map((sodo) => (

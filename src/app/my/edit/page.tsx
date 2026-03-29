@@ -66,7 +66,7 @@ export default function EditProfilePage() {
       // TODO: direct.ts에서 updateProfile 구현 후 연결
       await new Promise((resolve) => setTimeout(resolve, 800));
       setStatus('saved');
-      setTimeout(() => setStatus('idle'), 2000);
+      setTimeout(() => router.push('/my'), 1200);
     } catch {
       setStatus('idle');
     }

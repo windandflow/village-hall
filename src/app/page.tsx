@@ -56,7 +56,7 @@ export default function HomePage() {
               {t('landing.hero.manifesto')}
             </Link>
             <Link
-              href="/sodo/newmoon"
+              href="/onboarding/sign"
               className="liquid-glass rounded-full bg-wf-celadon/20 px-8 py-4 text-sm text-white transition-transform hover:scale-[1.03]"
             >
               {t('common.request_invite_long')}
@@ -211,8 +211,8 @@ export default function HomePage() {
                 {t('landing.cta.description')}
               </p>
               <Link
-                href="/sodo/newmoon"
-                className="mt-6 inline-block rounded-[10px] bg-wf-celadon px-8 py-4 text-sm font-bold text-white transition-opacity hover:opacity-80"
+                href="/onboarding/sign"
+                className="mt-6 inline-block liquid-glass rounded-full px-8 py-4 text-sm font-bold text-white transition-transform hover:scale-[1.03]"
               >
                 {t('common.request_invite_long')}
               </Link>

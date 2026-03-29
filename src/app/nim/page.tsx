@@ -38,7 +38,13 @@ export default function NimDirectoryPage() {
   return (
     <div className="flex flex-1 flex-col px-4 py-14">
       <div className="mx-auto w-full max-w-3xl">
-        <h1 className="mb-6 text-lg font-bold text-wf-navy">{t('nim.title')}</h1>
+        {/* 미니 히어로 */}
+        <div className="mb-8 rounded-[10px] bg-wf-navy p-8 text-center text-white">
+          <h1 className="text-2xl font-bold">{t('nim.title')}</h1>
+          <p className="mt-2 text-sm text-white/60">
+            {t('nim.hero_description')}
+          </p>
+        </div>
 
         {/* 검색 */}
         <input

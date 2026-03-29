@@ -62,9 +62,19 @@ export default function NimProfilePage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center px-4 py-14">
-      {/* NIM = 기본 열린 상태 (커버 없이 바로 5페이지) */}
-      <PassportBooklet data={profile} />
+    <div className="flex flex-1 flex-col px-4 py-14">
+      <div className="mx-auto w-full max-w-3xl">
+        {/* NIM 미니히어로 (공유) */}
+        <div className="mb-8 rounded-[10px] bg-wf-navy p-8 text-center text-white">
+          <h1 className="text-2xl font-bold">{t('nim.title')}</h1>
+          <p className="mt-2 text-sm text-white/60">
+            {t('nim.hero_description')}
+          </p>
+        </div>
+
+        {/* NIM = 기본 열린 상태 (커버 없이 바로 5페이지) */}
+        <PassportBooklet data={profile} />
+      </div>
     </div>
   );
 }

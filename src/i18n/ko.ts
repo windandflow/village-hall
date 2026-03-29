@@ -204,6 +204,7 @@ export const ko = {
   'nim.empty': '아직 구성원이 없습니다.',
   'nim.filter_all': '전체',
   'nim.filter_state': '소도별',
+  'nim.hero_description': 'Wind & Flow 네트워크의 구성원들을 만나보세요.',
   'nim.profile_not_found': '프로필을 찾을 수 없습니다.',
 
   // Sodo
@@ -211,9 +212,10 @@ export const ko = {
   'sodo.explore': '소도 둘러보기',
   'sodo.members_count': '구성원',
   'sodo.coming_soon': '준비 중',
+  'sodo.hero_description': '풍류도 정신 위에 세워진 디지털 소도(蘇塗). 각 소도는 고유한 문화와 자치를 가집니다.',
   'sodo.about': '소개',
   'sodo.events': '이벤트',
-  'sodo.invite': '초대 신청',
+  'sodo.invite': '비자 발급 신청',
   'sodo.members': '구성원',
   'sodo.no_events': '예정된 이벤트가 없습니다.',
 

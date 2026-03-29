@@ -27,6 +27,11 @@
   --radius: 0.625rem;
 }
 
+/* ── Mobile text size boost ── */
+@media (max-width: 640px) {
+  html { font-size: 17px; }
+}
+
 /* ── 햇님 (Light) ── */
 body {
   background: var(--color-wf-warm);

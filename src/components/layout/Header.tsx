@@ -14,7 +14,6 @@ export function Header() {
 
   const NAV_LINKS = [
     { href: '/about', labelKey: 'nav.about' as const },
-    { href: '/events', labelKey: 'nav.events' as const },
     { href: '/nim', labelKey: 'nav.members' as const },
     { href: '/sodo', labelKey: 'nav.sodo' as const },
   ];
@@ -37,7 +36,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-wf-text-light transition-colors hover:text-wf-text"
+              className="min-w-[3rem] text-center text-sm text-wf-text-light transition-colors hover:text-wf-text"
             >
               {t(link.labelKey)}
             </Link>

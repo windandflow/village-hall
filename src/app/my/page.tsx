@@ -20,6 +20,7 @@ export default function MyPage() {
     );
   }
 
+  // 비로그인 → 로그인 유도 + 여권발급 안내
   if (!authenticated) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 py-20">
@@ -34,21 +35,9 @@ export default function MyPage() {
         >
           {t('common.login')}
         </button>
-      </div>
-    );
-  }
-
-  // TODO: passport 존재 여부 확인 (Phase 2 완성 시 direct.ts에서 조회)
-  const hasPassport = !!entityId;
-
-  if (!hasPassport) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 py-20">
-        <div className="text-4xl">📘</div>
-        <h1 className="text-lg font-bold text-wf-navy">{t('my.no_passport')}</h1>
         <Link
           href="/onboarding/sign"
-          className="rounded-[10px] bg-wf-celadon px-8 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+          className="text-sm text-wf-celadon hover:underline"
         >
           {t('my.issue_passport')}
         </Link>
@@ -56,9 +45,9 @@ export default function MyPage() {
     );
   }
 
-  // 더미 데이터 (추후 direct.ts/SDK에서 실제 데이터 조회)
+  // 로그인됨 — 항상 passport 표시 (entity 존재 = 로그인 시 자동 생성)
   const passportData = {
-    entityId: entityId!,
+    entityId: entityId || 'unknown',
     displayName: displayName || 'Member',
     slug: undefined as string | undefined,
     bio: undefined as string | undefined,
@@ -85,15 +74,15 @@ export default function MyPage() {
           <div className="flex gap-3">
             <Link
               href="/my/edit"
-              className="rounded-[10px] border border-wf-border px-6 py-2 text-sm text-wf-text-light transition-colors hover:bg-wf-cream"
+              className="liquid-glass rounded-full px-6 py-2 text-sm text-wf-text-light transition-transform hover:scale-[1.03]"
             >
               {t('my.edit_profile')}
             </Link>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-[10px] border border-wf-border px-6 py-2 text-sm text-wf-text-faint transition-colors hover:bg-wf-cream"
+              className="rounded-full border border-wf-border px-6 py-2 text-sm text-wf-text-faint transition-colors hover:bg-wf-cream"
             >
-              {t('passport.nim') ? '닫기' : 'Close'}
+              ✕
             </button>
           </div>
         </>
@@ -101,12 +90,20 @@ export default function MyPage() {
         <PassportCover onClick={() => setIsOpen(true)} />
       )}
 
-      <button
-        onClick={logout}
-        className="mt-4 text-xs text-wf-text-faint transition-colors hover:text-wf-text-light"
-      >
-        {t('my.logout')}
-      </button>
+      <div className="flex gap-4">
+        <Link
+          href="/my/invite"
+          className="text-xs text-wf-celadon hover:underline"
+        >
+          {t('invite.title')}
+        </Link>
+        <button
+          onClick={logout}
+          className="text-xs text-wf-text-faint transition-colors hover:text-wf-text-light"
+        >
+          {t('my.logout')}
+        </button>
+      </div>
     </div>
   );
 }

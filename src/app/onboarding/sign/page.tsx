@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
@@ -13,8 +13,6 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 export default function OnboardingSignPage() {
   const { authenticated, login, loading } = useAuth();
   const { t } = useLocale();
-  const router = useRouter();
-
   const [agreed, setAgreed] = useState(false);
   const [status, setStatus] = useState<'idle' | 'signing' | 'success'>('idle');
 
@@ -61,12 +59,12 @@ export default function OnboardingSignPage() {
         <h1 className="text-lg font-bold text-wf-navy">
           {t('onboarding.sign.success')}
         </h1>
-        <button
-          onClick={() => router.push('/my')}
-          className="rounded-[10px] bg-wf-celadon px-8 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+        <Link
+          href="/my"
+          className="liquid-glass rounded-full px-8 py-3 text-sm font-semibold text-white bg-wf-celadon/20 transition-transform hover:scale-[1.03]"
         >
           {t('onboarding.sign.next')} →
-        </button>
+        </Link>
       </div>
     );
   }

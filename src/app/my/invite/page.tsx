@@ -93,6 +93,7 @@ export default function MyInvitePage() {
         <button
           className="mb-6 w-full rounded-[10px] bg-wf-celadon px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80 disabled:opacity-40"
           disabled={remaining === 0}
+          onClick={() => alert('준비 중입니다.')}
         >
           + {t('invite.create')}
         </button>

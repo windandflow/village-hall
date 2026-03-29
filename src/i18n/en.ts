@@ -206,6 +206,7 @@ export const en: Record<MessageKey, string> = {
   'nim.empty': 'No members yet.',
   'nim.filter_all': 'All',
   'nim.filter_state': 'By Sodo',
+  'nim.hero_description': 'Meet the members of the Wind & Flow network.',
   'nim.profile_not_found': 'Profile not found.',
 
   // Sodo
@@ -213,9 +214,10 @@ export const en: Record<MessageKey, string> = {
   'sodo.explore': 'Explore Sodo',
   'sodo.members_count': 'Members',
   'sodo.coming_soon': 'Coming Soon',
+  'sodo.hero_description': 'Digital Sodo built on the spirit of Pungryudo. Each Sodo has its own culture and governance.',
   'sodo.about': 'About',
   'sodo.events': 'Events',
-  'sodo.invite': 'Request Invite',
+  'sodo.invite': 'Visa Application',
   'sodo.members': 'Members',
   'sodo.no_events': 'No upcoming events.',
 
