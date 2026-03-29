@@ -65,7 +65,7 @@ export function Header() {
 
           <Link
             href="/my"
-            className="rounded-full bg-wf-navy px-4 py-1.5 text-sm text-white transition-opacity hover:opacity-80"
+            className="rounded-full bg-wf-navy px-4 py-2 text-sm text-white transition-opacity hover:opacity-80"
           >
             {t('common.my_passport')}
           </Link>
@@ -76,7 +76,7 @@ export function Header() {
           {/* 언어 토글 */}
           <button
             onClick={() => setLocale(locale === 'ko' ? 'en' : 'ko')}
-            className="rounded-md px-2 py-1 text-xs font-medium text-wf-text-light"
+            className="rounded-md px-3 py-2 text-xs font-medium text-wf-text-light"
           >
             {locale === 'ko' ? 'EN' : '한'}
           </button>
@@ -84,7 +84,7 @@ export function Header() {
           {/* 테마 토글 */}
           <button
             onClick={toggleTheme}
-            className="rounded-md px-1 py-1 text-sm"
+            className="rounded-md px-2 py-2 text-sm"
             aria-label={theme === 'light' ? t('theme.dark') : t('theme.light')}
           >
             {theme === 'light' ? '🌙' : '☀️'}

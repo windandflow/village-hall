@@ -47,7 +47,7 @@ export function PassportBooklet({ data, className }: PassportBookletProps) {
   const initial = getAvatarInitial(data.displayName);
 
   return (
-    <div className={cn('mx-auto w-full max-w-[400px]', className)}>
+    <div className={cn('mx-auto w-full max-w-[360px] md:max-w-[400px]', className)}>
       {/* 탭 네비 */}
       <div className="mb-3 flex gap-1">
         {PAGE_LABELS.map((label, i) => (

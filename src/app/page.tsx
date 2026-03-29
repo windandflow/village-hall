@@ -32,8 +32,8 @@ export default function HomePage() {
         </video>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center px-6 pb-40 pt-32 text-center">
-          <h1 className="animate-fade-rise max-w-4xl text-5xl font-normal leading-[0.95] tracking-[-2.46px] text-white sm:text-7xl md:text-8xl">
+        <div className="relative z-10 flex flex-col items-center px-4 pb-20 pt-20 text-center sm:px-6 md:pb-40 md:pt-32">
+          <h1 className="animate-fade-rise max-w-4xl text-3xl font-normal leading-[0.95] tracking-[-1.5px] text-white sm:text-5xl md:text-7xl lg:text-8xl">
             {t('landing.hero.cinematic_pre')}
             <em className="not-italic text-white/50">
               {t('landing.hero.cinematic_em')}
@@ -51,7 +51,7 @@ export default function HomePage() {
           <div className="animate-fade-rise-delay-2 mt-12 flex flex-wrap justify-center gap-4">
             <Link
               href="/about"
-              className="liquid-glass rounded-full px-8 py-4 text-sm text-white transition-transform hover:scale-[1.03]"
+              className="liquid-glass rounded-full px-6 py-3 text-sm text-white transition-transform hover:scale-[1.03] md:px-8 md:py-4"
             >
               {t('landing.hero.manifesto')}
             </Link>
@@ -163,7 +163,7 @@ export default function HomePage() {
               {t('common.all')}
             </Link>
           </div>
-          <div className="flex gap-6 overflow-x-auto pb-4">
+          <div className="flex gap-4 overflow-x-auto pb-4 md:gap-6">
             {FEATURED_NIMS.map((nim) => (
               <Link
                 key={nim.handle}
@@ -176,7 +176,7 @@ export default function HomePage() {
                   {nim.initial}
                 </div>
                 <span className="text-[11px] font-medium text-wf-navy">
-                  {nim.name}
+                  {nim.name} {t('passport.nim')}
                 </span>
                 <span className="text-[10px] text-wf-text-faint">
                   {nim.handle}

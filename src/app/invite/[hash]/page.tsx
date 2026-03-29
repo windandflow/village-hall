@@ -70,7 +70,7 @@ export default function InviteAcceptPage() {
         <div className="text-4xl">✉️</div>
         <h1 className="text-lg font-bold text-wf-navy">{t('invite.accept_title')}</h1>
         <p className="text-sm text-wf-text-light">
-          <strong>{inviterName}</strong>{t('invite.accept_description')}
+          <strong>{inviterName} {t('passport.nim')}</strong>{t('invite.accept_description')}
         </p>
         <p className="text-xs text-wf-text-faint">{t('invite.login_first')}</p>
         <button
@@ -125,7 +125,7 @@ export default function InviteAcceptPage() {
       <div className="text-4xl">✉️</div>
       <h1 className="text-lg font-bold text-wf-navy">{t('invite.accept_title')}</h1>
       <p className="text-sm text-wf-text-light">
-        <strong>{inviterName}</strong>{t('invite.accept_description')}
+        <strong>{inviterName} {t('passport.nim')}</strong>{t('invite.accept_description')}
       </p>
       {invitation?.state?.name && (
         <p className="text-xs text-wf-celadon">{invitation.state.name}</p>
