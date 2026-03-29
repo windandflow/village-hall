@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { VisaLevel } from '@/components/visa/VisaLevel';
@@ -15,25 +15,54 @@ const TABS: { key: AdminTab; labelKey: string }[] = [
   { key: 'reports', labelKey: 'admin.reports' },
 ];
 
-// 더미 통계
-const MOCK_STATS = { members: 23, visas: 18, pendingRequests: 3, events: 5 };
+interface Stats {
+  totalMembers: number;
+  totalVisas: number;
+  pendingRequests: number;
+  totalPosts: number;
+}
 
-const MOCK_REQUESTS = [
-  { id: '1', name: '김민수', email: 'minsu@example.com', reason: '인제 지역 활동에 관심이 있습니다.', createdAt: '2026-03-27' },
-  { id: '2', name: '이서연', email: 'seoyeon@example.com', reason: '풍류도 철학에 공감합니다.', createdAt: '2026-03-28' },
-  { id: '3', name: '박지호', email: 'jiho@example.com', reason: '달뜨는마을 방문 후 참여하고 싶습니다.', createdAt: '2026-03-29' },
-];
+interface Member {
+  entityId: string;
+  displayName: string;
+  slug: string | null;
+  level: number;
+  joinedAt: string;
+}
 
-const MOCK_MEMBERS = [
-  { entityId: 'a1b2c3d4-0001', displayName: '범선', slug: 'bumsun', level: 4, email: 'bumsun@pungryu.kr' },
-  { entityId: 'a1b2c3d4-0002', displayName: '한석', slug: 'hahnryu', level: 3, email: 'hahn@nodeone.io' },
-  { entityId: 'a1b2c3d4-0003', displayName: '지연', slug: 'jiyeon', level: 2, email: 'jiyeon@example.com' },
-];
+interface InviteRequest {
+  request_id: string;
+  name: string;
+  email: string;
+  reason: string;
+  status: string;
+  created_at: string;
+}
 
 export default function AdminPage() {
   const { authenticated, login, loading } = useAuth();
   const { t } = useLocale();
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [requests, setRequests] = useState<InviteRequest[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authenticated) return;
+    Promise.all([
+      fetch('/api/admin/stats?stateId=newmoon').then((r) => r.json()),
+      fetch('/api/admin/members?stateId=newmoon').then((r) => r.json()),
+      fetch('/api/admin/invite-requests').then((r) => r.json()),
+    ])
+      .then(([s, m, r]) => {
+        setStats(s);
+        setMembers(Array.isArray(m) ? m : []);
+        setRequests(Array.isArray(r) ? r : []);
+      })
+      .catch(() => {})
+      .finally(() => setDataLoading(false));
+  }, [authenticated]);
 
   if (loading) {
     return (
@@ -57,8 +86,6 @@ export default function AdminPage() {
     );
   }
 
-  // TODO: 실제 L3+ 권한 체크
-
   return (
     <div className="flex flex-1 flex-col px-4 py-14">
       <div className="mx-auto w-full max-w-4xl">
@@ -81,93 +108,109 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Dashboard */}
-        {activeTab === 'dashboard' && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { labelKey: 'admin.total_members', value: MOCK_STATS.members },
-              { labelKey: 'admin.total_visas', value: MOCK_STATS.visas },
-              { labelKey: 'admin.pending_requests', value: MOCK_STATS.pendingRequests },
-              { labelKey: 'admin.total_events', value: MOCK_STATS.events },
-            ].map((stat) => (
-              <div
-                key={stat.labelKey}
-                className="rounded-[10px] bg-wf-cream p-5 dark:bg-[#0F1F2E]"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-widest text-wf-text-faint">
-                  {t(stat.labelKey as Parameters<typeof t>[0])}
-                </p>
-                <p className="mt-2 text-2xl font-bold text-wf-navy">{stat.value}</p>
-              </div>
-            ))}
+        {dataLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
           </div>
-        )}
-
-        {/* Members */}
-        {activeTab === 'members' && (
-          <div className="space-y-3">
-            {MOCK_MEMBERS.map((m) => (
-              <div
-                key={m.entityId}
-                className="flex items-center justify-between rounded-[10px] bg-wf-cream p-4 dark:bg-[#0F1F2E]"
-              >
-                <div>
-                  <span className="font-medium text-wf-navy">{m.displayName} {t('passport.nim')}</span>
-                  <p className="text-xs text-wf-text-faint">@{m.slug} · {m.email}</p>
-                </div>
-                <VisaLevel level={m.level} />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Content */}
-        {activeTab === 'content' && (
-          <div className="rounded-[10px] bg-wf-cream p-6 text-center dark:bg-[#0F1F2E]">
-            <p className="text-sm text-wf-text-faint">콘텐츠 관리 (Phase 4+)</p>
-          </div>
-        )}
-
-        {/* Requests */}
-        {activeTab === 'requests' && (
-          <div className="space-y-3">
-            {MOCK_REQUESTS.length === 0 ? (
-              <p className="text-sm text-wf-text-faint">{t('admin.no_requests')}</p>
-            ) : (
-              MOCK_REQUESTS.map((req) => (
-                <div
-                  key={req.id}
-                  className="rounded-[10px] bg-wf-cream p-5 dark:bg-[#0F1F2E]"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-medium text-wf-navy">{req.name}</p>
-                      <p className="text-xs text-wf-text-faint">{req.email} · {req.createdAt}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="rounded-lg bg-wf-celadon px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80">
-                        {t('admin.approve')}
-                      </button>
-                      <button className="rounded-lg border border-wf-border px-3 py-1.5 text-xs text-wf-text-faint transition-colors hover:bg-wf-warm">
-                        {t('admin.reject')}
-                      </button>
-                    </div>
+        ) : (
+          <>
+            {/* Dashboard */}
+            {activeTab === 'dashboard' && stats && (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { labelKey: 'admin.total_members', value: stats.totalMembers },
+                  { labelKey: 'admin.total_visas', value: stats.totalVisas },
+                  { labelKey: 'admin.pending_requests', value: stats.pendingRequests },
+                  { labelKey: 'admin.total_events', value: stats.totalPosts },
+                ].map((stat) => (
+                  <div
+                    key={stat.labelKey}
+                    className="rounded-[10px] bg-wf-cream p-5 dark:bg-[#0F1F2E]"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-wf-text-faint">
+                      {t(stat.labelKey as Parameters<typeof t>[0])}
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-wf-navy">{stat.value}</p>
                   </div>
-                  <p className="mt-2 text-sm text-wf-text-light">{req.reason}</p>
-                </div>
-              ))
+                ))}
+              </div>
             )}
-          </div>
-        )}
 
-        {/* Reports */}
-        {activeTab === 'reports' && (
-          <div className="rounded-[10px] bg-wf-cream p-6 text-center dark:bg-[#0F1F2E]">
-            <p className="mb-4 text-sm text-wf-text-light">소도 운영 보고서를 생성합니다.</p>
-            <button className="rounded-[10px] bg-wf-navy px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80">
-              {t('admin.generate_report')}
-            </button>
-          </div>
+            {/* Members */}
+            {activeTab === 'members' && (
+              <div className="space-y-3">
+                {members.length === 0 ? (
+                  <p className="text-center text-sm text-wf-text-faint">멤버가 없습니다.</p>
+                ) : (
+                  members.map((m) => (
+                    <div
+                      key={m.entityId}
+                      className="flex items-center justify-between rounded-[10px] bg-wf-cream p-4 dark:bg-[#0F1F2E]"
+                    >
+                      <div>
+                        <span className="font-medium text-wf-navy">{m.displayName} {t('passport.nim')}</span>
+                        <p className="text-xs text-wf-text-faint">
+                          {m.slug ? `@${m.slug}` : ''} · {new Date(m.joinedAt).toLocaleDateString('ko-KR')}
+                        </p>
+                      </div>
+                      <VisaLevel level={m.level} />
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* Content */}
+            {activeTab === 'content' && (
+              <div className="rounded-[10px] bg-wf-cream p-6 text-center dark:bg-[#0F1F2E]">
+                <p className="text-sm text-wf-text-faint">콘텐츠 관리 (Phase 4+)</p>
+              </div>
+            )}
+
+            {/* Requests */}
+            {activeTab === 'requests' && (
+              <div className="space-y-3">
+                {requests.length === 0 ? (
+                  <p className="text-sm text-wf-text-faint">{t('admin.no_requests')}</p>
+                ) : (
+                  requests.map((req) => (
+                    <div
+                      key={req.request_id}
+                      className="rounded-[10px] bg-wf-cream p-5 dark:bg-[#0F1F2E]"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-medium text-wf-navy">{req.name}</p>
+                          <p className="text-xs text-wf-text-faint">
+                            {req.email} · {new Date(req.created_at).toLocaleDateString('ko-KR')}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="rounded-lg bg-wf-celadon px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80">
+                            {t('admin.approve')}
+                          </button>
+                          <button className="rounded-lg border border-wf-border px-3 py-1.5 text-xs text-wf-text-faint transition-colors hover:bg-wf-warm">
+                            {t('admin.reject')}
+                          </button>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-sm text-wf-text-light">{req.reason}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* Reports */}
+            {activeTab === 'reports' && (
+              <div className="rounded-[10px] bg-wf-cream p-6 text-center dark:bg-[#0F1F2E]">
+                <p className="mb-4 text-sm text-wf-text-light">소도 운영 보고서를 생성합니다.</p>
+                <button className="rounded-[10px] bg-wf-navy px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80">
+                  {t('admin.generate_report')}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

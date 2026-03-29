@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
@@ -19,12 +19,33 @@ export default function EditProfilePage() {
   const router = useRouter();
 
   const [slug, setSlug] = useState('');
-  const [name, setName] = useState(displayName || '');
+  const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [links, setLinks] = useState<LinkItem[]>([]);
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [slugError, setSlugError] = useState('');
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  if (loading) {
+  // 기존 프로필 로드
+  useEffect(() => {
+    if (!entityId) return;
+    fetch(`/api/profile?entityId=${entityId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setSlug(data.slug || '');
+          setName(data.displayName || '');
+          setBio(data.bio || '');
+          setLinks(data.links || []);
+        } else {
+          setName(displayName || '');
+        }
+      })
+      .catch(() => setName(displayName || ''))
+      .finally(() => setInitialLoading(false));
+  }, [entityId, displayName]);
+
+  if (loading || initialLoading) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
@@ -62,13 +83,41 @@ export default function EditProfilePage() {
 
   async function handleSave() {
     setStatus('saving');
+    setSlugError('');
+
     try {
-      // TODO: direct.ts에서 updateProfile 구현 후 연결
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entityId,
+          displayName: name,
+          bio: bio || null,
+          slug: slug || null,
+          links: links.filter((l) => l.label && l.url),
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        if (res.status === 409) {
+          setSlugError(t('edit.slug_taken'));
+          setStatus('idle');
+          return;
+        }
+        if (res.status === 400 && err.error === 'Reserved slug') {
+          setSlugError(t('edit.slug_taken'));
+          setStatus('idle');
+          return;
+        }
+        throw new Error(err.error);
+      }
+
       setStatus('saved');
       setTimeout(() => router.push('/my'), 1200);
     } catch {
-      setStatus('idle');
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 2000);
     }
   }
 
@@ -85,10 +134,16 @@ export default function EditProfilePage() {
             <Input
               id="edit-slug"
               value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
+              onChange={(e) => {
+                setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''));
+                setSlugError('');
+              }}
               placeholder={t('edit.slug_placeholder')}
             />
           </div>
+          {slugError && (
+            <p className="mt-1 text-xs text-red-500">{slugError}</p>
+          )}
         </div>
 
         {/* Name */}
@@ -159,6 +214,9 @@ export default function EditProfilePage() {
           </button>
           {status === 'saved' && (
             <span className="text-sm text-wf-celadon">{t('edit.saved')}</span>
+          )}
+          {status === 'error' && (
+            <span className="text-sm text-red-500">저장 실패</span>
           )}
           <button
             onClick={() => router.push('/my')}

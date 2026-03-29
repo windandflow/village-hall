@@ -1,19 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getAdminStats } from '@/lib/direct';
 
 /**
- * GET /api/admin/stats
+ * GET /api/admin/stats?stateId=newmoon
  * Admin 대시보드 통계
  * TODO: Privy 토큰 검증 + L3+ 권한 체크
- * TODO: direct.ts에서 실제 집계 쿼리
  */
-export async function GET() {
-  // 더미 통계 (추후 Supabase 집계로 교체)
-  const stats = {
-    totalMembers: 23,
-    totalVisas: 18,
-    pendingRequests: 3,
-    totalEvents: 5,
-  };
+export async function GET(request: NextRequest) {
+  const stateId = request.nextUrl.searchParams.get('stateId') || 'newmoon';
 
-  return NextResponse.json(stats);
+  try {
+    const stats = await getAdminStats(stateId);
+    return NextResponse.json(stats);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
+  }
 }

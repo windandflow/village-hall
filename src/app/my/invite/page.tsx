@@ -1,41 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
 interface Invitation {
-  id: string;
-  code: string;
-  status: 'pending' | 'accepted' | 'expired';
-  inviteeName?: string;
-  createdAt: string;
+  invitation_id: string;
+  invite_code: string;
+  status: 'pending' | 'accepted' | 'declined' | 'expired';
+  created_at: string;
+  accepted_entity?: { display_name: string; slug?: string } | null;
 }
 
-// 더미 데이터 (추후 direct.ts → SDK로 교체)
-const MOCK_INVITATIONS: Invitation[] = [
-  {
-    id: '1',
-    code: 'abc123',
-    status: 'accepted',
-    inviteeName: '지연',
-    createdAt: '2026-03-18',
-  },
-  {
-    id: '2',
-    code: 'def456',
-    status: 'pending',
-    createdAt: '2026-03-25',
-  },
-];
-
 export default function MyInvitePage() {
-  const { authenticated, login, loading } = useAuth();
+  const { entityId, authenticated, login, loading } = useAuth();
   const { t } = useLocale();
   const [copied, setCopied] = useState<string | null>(null);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
 
-  if (loading) {
+  const loadInvitations = useCallback(() => {
+    if (!entityId) return;
+    fetch(`/api/invitation?entityId=${entityId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setInvitations(data))
+      .catch(() => setInvitations([]))
+      .finally(() => setDataLoading(false));
+  }, [entityId]);
+
+  useEffect(() => {
+    loadInvitations();
+  }, [loadInvitations]);
+
+  if (loading || dataLoading) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
@@ -57,14 +56,31 @@ export default function MyInvitePage() {
     );
   }
 
-  const invitations = MOCK_INVITATIONS;
-  const remaining: number = 3; // TODO: 실제 남은 초대 수
+  const pendingCount = invitations.filter((i) => i.status === 'pending').length;
 
   function copyLink(code: string) {
     const url = `${window.location.origin}/invite/${code}`;
     navigator.clipboard.writeText(url);
     setCopied(code);
     setTimeout(() => setCopied(null), 2000);
+  }
+
+  async function handleCreate() {
+    setCreating(true);
+    try {
+      const res = await fetch('/api/invitation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entityId, stateId: 'newmoon' }),
+      });
+      if (res.ok) {
+        loadInvitations();
+      }
+    } catch {
+      // ignore
+    } finally {
+      setCreating(false);
+    }
   }
 
   const statusLabel = (s: Invitation['status']) => {
@@ -75,7 +91,7 @@ export default function MyInvitePage() {
 
   const statusColor = (s: Invitation['status']) => {
     if (s === 'accepted') return 'text-wf-celadon';
-    if (s === 'expired') return 'text-wf-text-faint';
+    if (s === 'expired' || s === 'declined') return 'text-wf-text-faint';
     return 'text-wf-gold';
   };
 
@@ -85,17 +101,17 @@ export default function MyInvitePage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-lg font-bold text-wf-navy">{t('invite.title')}</h1>
           <span className="text-sm text-wf-text-faint">
-            {t('invite.remaining')}: <strong className="text-wf-navy">{remaining}</strong>
+            {t('invite.status_pending')}: <strong className="text-wf-navy">{pendingCount}</strong>
           </span>
         </div>
 
         {/* 새 초대장 버튼 */}
         <button
           className="mb-6 w-full rounded-[10px] bg-wf-celadon px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80 disabled:opacity-40"
-          disabled={remaining === 0}
-          onClick={() => alert('준비 중입니다.')}
+          disabled={creating}
+          onClick={handleCreate}
         >
-          + {t('invite.create')}
+          {creating ? '...' : `+ ${t('invite.create')}`}
         </button>
 
         {/* 초대 목록 */}
@@ -105,17 +121,19 @@ export default function MyInvitePage() {
           <div className="space-y-3">
             {invitations.map((inv) => (
               <div
-                key={inv.id}
+                key={inv.invitation_id}
                 className="rounded-[10px] bg-wf-cream p-4 dark:bg-[#0F1F2E]"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    {inv.inviteeName && (
+                    {inv.accepted_entity?.display_name && (
                       <p className="text-sm font-medium text-wf-navy">
-                        {inv.inviteeName} {t('passport.nim')}
+                        {inv.accepted_entity.display_name} {t('passport.nim')}
                       </p>
                     )}
-                    <p className="text-[11px] text-wf-text-faint">{inv.createdAt}</p>
+                    <p className="text-[11px] text-wf-text-faint">
+                      {new Date(inv.created_at).toLocaleDateString('ko-KR')}
+                    </p>
                   </div>
                   <span className={`text-xs font-medium ${statusColor(inv.status)}`}>
                     {statusLabel(inv.status)}
@@ -123,10 +141,10 @@ export default function MyInvitePage() {
                 </div>
                 {inv.status === 'pending' && (
                   <button
-                    onClick={() => copyLink(inv.code)}
+                    onClick={() => copyLink(inv.invite_code)}
                     className="mt-3 w-full rounded-lg border border-wf-border py-2 text-xs text-wf-text-light transition-colors hover:bg-wf-warm"
                   >
-                    {copied === inv.code ? t('invite.copied') : t('invite.copy')}
+                    {copied === inv.invite_code ? t('invite.copied') : t('invite.copy')}
                   </button>
                 )}
               </div>

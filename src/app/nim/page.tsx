@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { getAvatarGradient, getAvatarInitial } from '@/lib/utils/avatar';
@@ -15,21 +15,21 @@ interface NimEntry {
   stateId: string;
 }
 
-// 더미 데이터 (추후 direct.ts → SDK로 교체)
-const MOCK_NIMS: NimEntry[] = [
-  { entityId: 'a1b2c3d4-0001', displayName: '범선', slug: 'bumsun', bio: '풍류회 대표', level: 4, stateId: 'newmoon' },
-  { entityId: 'a1b2c3d4-0002', displayName: '한석', slug: 'hahnryu', bio: 'Node One 대표', level: 3, stateId: 'newmoon' },
-  { entityId: 'a1b2c3d4-0003', displayName: '지연', slug: 'jiyeon', bio: '달뜨는마을 주민', level: 2, stateId: 'newmoon' },
-  { entityId: 'a1b2c3d4-0004', displayName: '희문', slug: 'heemun', bio: '인제 신월리', level: 1, stateId: 'newmoon' },
-  { entityId: 'a1b2c3d4-0005', displayName: '도훈', slug: 'dohun', bio: 'Studio Kado', level: 1, stateId: 'newmoon' },
-  { entityId: 'a1b2c3d4-0006', displayName: '카야', slug: 'kaya', bio: 'Studio Kado', level: 1, stateId: 'newmoon' },
-];
-
 export default function NimDirectoryPage() {
   const { t } = useLocale();
   const [search, setSearch] = useState('');
+  const [nims, setNims] = useState<NimEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = MOCK_NIMS.filter(
+  useEffect(() => {
+    fetch('/api/nim?stateId=newmoon')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setNims(data))
+      .catch(() => setNims([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = nims.filter(
     (n) =>
       n.displayName.toLowerCase().includes(search.toLowerCase()) ||
       n.slug.toLowerCase().includes(search.toLowerCase()),
@@ -56,7 +56,11 @@ export default function NimDirectoryPage() {
         />
 
         {/* 목록 */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
+          </div>
+        ) : filtered.length === 0 ? (
           <p className="text-center text-sm text-wf-text-faint">
             {search ? t('nim.no_results') : t('nim.empty')}
           </p>
@@ -67,7 +71,7 @@ export default function NimDirectoryPage() {
               return (
                 <Link
                   key={nim.entityId}
-                  href={`/nim/${nim.slug}`}
+                  href={`/nim/${nim.slug || nim.entityId}`}
                   className="flex items-center gap-4 rounded-[10px] bg-wf-cream p-4 transition-shadow hover:shadow-[0_10px_30px_-10px_rgba(27,58,92,0.08)] dark:bg-[#0F1F2E]"
                 >
                   <div
@@ -83,7 +87,9 @@ export default function NimDirectoryPage() {
                       </span>
                       <VisaLevel level={nim.level} />
                     </div>
-                    <p className="text-xs text-wf-text-faint">@{nim.slug}</p>
+                    {nim.slug && (
+                      <p className="text-xs text-wf-text-faint">@{nim.slug}</p>
+                    )}
                     {nim.bio && (
                       <p className="mt-0.5 truncate text-xs text-wf-text-light">{nim.bio}</p>
                     )}

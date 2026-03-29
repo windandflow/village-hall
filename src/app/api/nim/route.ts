@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { listMembers } from '@/lib/direct';
+import { listNims } from '@/lib/direct';
 
 /**
- * GET /api/admin/members?stateId=newmoon
- * Admin용 회원 목록
- * TODO: Privy 토큰 검증 + L3+ 권한 체크
+ * GET /api/nim?stateId=newmoon
+ * NIM 디렉토리 (소도별 멤버 목록)
  */
 export async function GET(request: NextRequest) {
   const stateId = request.nextUrl.searchParams.get('stateId') || 'newmoon';
 
   try {
-    const members = await listMembers(stateId);
-    return NextResponse.json(members);
+    const nims = await listNims(stateId);
+    return NextResponse.json(nims);
   } catch {
     return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 });
   }

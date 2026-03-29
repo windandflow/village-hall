@@ -1,24 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
+
+interface InvitationData {
+  invitation_id: string;
+  invite_code: string;
+  state_id: string;
+  inviter: { display_name: string; slug?: string } | null;
+  state: { name: string } | null;
+}
 
 export default function InviteAcceptPage() {
   const params = useParams();
   const hash = params.hash as string;
   const router = useRouter();
-  const { authenticated, login, loading } = useAuth();
+  const { entityId, authenticated, login, loading } = useAuth();
   const { t } = useLocale();
 
-  const [status, setStatus] = useState<'idle' | 'accepting' | 'accepted' | 'invalid'>('idle');
+  const [status, setStatus] = useState<'loading' | 'idle' | 'accepting' | 'accepted' | 'invalid'>('loading');
+  const [invitation, setInvitation] = useState<InvitationData | null>(null);
 
-  // TODO: hash로 초대 정보 조회 (direct.ts)
-  const inviterName = '범선'; // 더미
-  const isValid = hash && hash.length > 0;
+  useEffect(() => {
+    if (!hash) {
+      setStatus('invalid');
+      return;
+    }
+    fetch(`/api/invitation/accept?code=${hash}`)
+      .then((res) => {
+        if (!res.ok) {
+          setStatus('invalid');
+          return null;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data) {
+          setInvitation(data);
+          setStatus('idle');
+        }
+      })
+      .catch(() => setStatus('invalid'));
+  }, [hash]);
 
-  if (loading) {
+  if (loading || status === 'loading') {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
@@ -26,7 +53,7 @@ export default function InviteAcceptPage() {
     );
   }
 
-  if (!isValid) {
+  if (status === 'invalid') {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 py-20">
         <div className="text-4xl">❌</div>
@@ -34,6 +61,8 @@ export default function InviteAcceptPage() {
       </div>
     );
   }
+
+  const inviterName = invitation?.inviter?.display_name || '';
 
   if (!authenticated) {
     return (
@@ -72,9 +101,20 @@ export default function InviteAcceptPage() {
   async function handleAccept() {
     setStatus('accepting');
     try {
-      // TODO: /api/invitation/accept 호출
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setStatus('accepted');
+      const res = await fetch('/api/invitation/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: hash,
+          entityId,
+          stateId: invitation?.state_id || 'newmoon',
+        }),
+      });
+      if (res.ok) {
+        setStatus('accepted');
+      } else {
+        setStatus('invalid');
+      }
     } catch {
       setStatus('invalid');
     }
@@ -87,6 +127,9 @@ export default function InviteAcceptPage() {
       <p className="text-sm text-wf-text-light">
         <strong>{inviterName}</strong>{t('invite.accept_description')}
       </p>
+      {invitation?.state?.name && (
+        <p className="text-xs text-wf-celadon">{invitation.state.name}</p>
+      )}
 
       <div className="flex gap-3">
         <button

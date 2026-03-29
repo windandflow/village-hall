@@ -1,18 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { PassportCover } from '@/components/passport/PassportCover';
 import { PassportBooklet } from '@/components/passport/PassportBooklet';
 
+interface ProfileData {
+  entityId: string;
+  displayName: string;
+  slug?: string;
+  bio?: string;
+  passportNumber: number | null;
+  issuedAt: string | null;
+  hasPassport: boolean;
+  visas: Array<{ stateId: string; stateName: string; level: number; levelLabel: string; joinedAt: string }>;
+  links: Array<{ label: string; url: string }>;
+  bonds: Array<{ entityId: string; displayName: string; slug?: string }>;
+}
+
 export default function MyPage() {
   const { entityId, displayName, loading, authenticated, login, logout } = useAuth();
   const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
 
-  if (loading) {
+  useEffect(() => {
+    if (!entityId) return;
+    setProfileLoading(true);
+    fetch(`/api/profile?entityId=${entityId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setProfile(data))
+      .catch(() => setProfile(null))
+      .finally(() => setProfileLoading(false));
+  }, [entityId]);
+
+  if (loading || profileLoading) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
@@ -45,25 +70,16 @@ export default function MyPage() {
     );
   }
 
-  // 로그인됨 — 항상 passport 표시 (entity 존재 = 로그인 시 자동 생성)
   const passportData = {
-    entityId: entityId || 'unknown',
-    displayName: displayName || 'Member',
-    slug: undefined as string | undefined,
-    bio: undefined as string | undefined,
-    passportNumber: 1,
-    issuedAt: '2026-03-20',
-    visas: [
-      {
-        stateId: 'newmoon',
-        stateName: '달뜨는마을',
-        level: 1,
-        levelLabel: 'Participant',
-        joinedAt: '2026-03-20',
-      },
-    ],
-    links: [] as Array<{ label: string; url: string }>,
-    bonds: [] as Array<{ entityId: string; displayName: string; slug?: string }>,
+    entityId: profile?.entityId || entityId || 'unknown',
+    displayName: profile?.displayName || displayName || 'Member',
+    slug: profile?.slug,
+    bio: profile?.bio,
+    passportNumber: profile?.passportNumber ?? undefined,
+    issuedAt: profile?.issuedAt || new Date().toISOString().split('T')[0],
+    visas: profile?.visas || [],
+    links: profile?.links || [],
+    bonds: profile?.bonds || [],
   };
 
   return (
