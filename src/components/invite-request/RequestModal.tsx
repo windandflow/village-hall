@@ -47,8 +47,12 @@ export function RequestModal({ trigger }: RequestModalProps) {
 
     setStatus('submitting');
     try {
-      // TODO: Phase 3에서 /api/invite-request 연결
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await fetch('/api/invite-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, reason, stateId: 'newmoon' }),
+      });
+      if (!res.ok) throw new Error('Request failed');
       setStatus('success');
     } catch {
       setStatus('error');

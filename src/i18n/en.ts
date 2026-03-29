@@ -206,6 +206,34 @@ export const en: Record<MessageKey, string> = {
   'nim.filter_state': 'By Sodo',
   'nim.profile_not_found': 'Profile not found.',
 
+  // Sodo
+  'sodo.title': 'Sodo Network',
+  'sodo.explore': 'Explore Sodo',
+  'sodo.members_count': 'Members',
+  'sodo.coming_soon': 'Coming Soon',
+  'sodo.about': 'About',
+  'sodo.events': 'Events',
+  'sodo.invite': 'Request Invite',
+  'sodo.members': 'Members',
+  'sodo.no_events': 'No upcoming events.',
+
+  // Admin
+  'admin.title': 'Admin',
+  'admin.dashboard': 'Dashboard',
+  'admin.members': 'Members',
+  'admin.content': 'Content',
+  'admin.requests': 'Requests',
+  'admin.reports': 'Reports',
+  'admin.total_members': 'Total Members',
+  'admin.total_visas': 'Visas Issued',
+  'admin.pending_requests': 'Pending Requests',
+  'admin.total_events': 'Events',
+  'admin.no_requests': 'No pending requests.',
+  'admin.approve': 'Approve',
+  'admin.reject': 'Reject',
+  'admin.generate_report': 'Generate Report',
+  'admin.unauthorized': 'Admin access required. (L3+)',
+
   // Theme
   'theme.light': 'Sun',
   'theme.dark': 'Moon',

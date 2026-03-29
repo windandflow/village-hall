@@ -204,6 +204,34 @@ export const ko = {
   'nim.filter_state': '소도별',
   'nim.profile_not_found': '프로필을 찾을 수 없습니다.',
 
+  // Sodo
+  'sodo.title': '소도 네트워크',
+  'sodo.explore': '소도 둘러보기',
+  'sodo.members_count': '구성원',
+  'sodo.coming_soon': '준비 중',
+  'sodo.about': '소개',
+  'sodo.events': '이벤트',
+  'sodo.invite': '초대 신청',
+  'sodo.members': '구성원',
+  'sodo.no_events': '예정된 이벤트가 없습니다.',
+
+  // Admin
+  'admin.title': '관리',
+  'admin.dashboard': '대시보드',
+  'admin.members': '회원',
+  'admin.content': '콘텐츠',
+  'admin.requests': '초대 신청',
+  'admin.reports': '보고서',
+  'admin.total_members': '전체 구성원',
+  'admin.total_visas': '발급된 비자',
+  'admin.pending_requests': '대기 중 신청',
+  'admin.total_events': '이벤트',
+  'admin.no_requests': '대기 중인 신청이 없습니다.',
+  'admin.approve': '승인',
+  'admin.reject': '거절',
+  'admin.generate_report': '보고서 생성',
+  'admin.unauthorized': '관리자 권한이 필요합니다. (L3 이상)',
+
   // Theme
   'theme.light': '햇님',
   'theme.dark': '달님',
