@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLocale } from '@/components/providers/LocaleProvider';
@@ -10,32 +10,30 @@ import { VisaLevel } from '@/components/visa/VisaLevel';
 
 const TAB_KEYS = ['about', 'events', 'invite', 'members'] as const;
 
-// 더미 데이터
-const SODO_DATA: Record<string, {
+// 소도 정적 정보 (이벤트, 소개 등은 아직 DB 없으므로 유지)
+const SODO_STATIC: Record<string, {
   name: string;
   location: string;
   emoji: string;
   description: string;
-  members: Array<{ entityId: string; displayName: string; slug: string; level: number }>;
   events: Array<{ title: string; date: string; location: string }>;
 }> = {
   newmoon: {
     name: '달뜨는마을',
     location: '강원 인제군 · 신월리',
     emoji: '🌙',
-    description: '인제 신월리에 위치한 W&F의 첫 번째 소도. 23명의 구성원이 자연과 함께 새로운 관계를 실험하고 있습니다.\n\n모심 · 살림 · 어울림의 원칙 위에, 디지털과 로컬이 만나는 공동체.',
-    members: [
-      { entityId: 'a1b2c3d4-0001', displayName: '범선', slug: 'bumsun', level: 4 },
-      { entityId: 'a1b2c3d4-0002', displayName: '한석', slug: 'hahnryu', level: 3 },
-      { entityId: 'a1b2c3d4-0003', displayName: '지연', slug: 'jiyeon', level: 2 },
-      { entityId: 'a1b2c3d4-0004', displayName: '희문', slug: 'heemun', level: 1 },
-      { entityId: 'a1b2c3d4-0005', displayName: '도훈', slug: 'dohun', level: 1 },
-      { entityId: 'a1b2c3d4-0006', displayName: '카야', slug: 'kaya', level: 1 },
-    ],
+    description: '인제 신월리에 위치한 W&F의 첫 번째 소도. 자연과 함께 새로운 관계를 실험하고 있습니다.\n\n모심 · 살림 · 어울림의 원칙 위에, 디지털과 로컬이 만나는 공동체.',
     events: [
       { title: '🌸 봄맞이 김치 워크숍', date: '2026-03-22', location: '폐교' },
     ],
   },
+};
+
+type Member = {
+  entityId: string;
+  displayName: string;
+  slug: string;
+  level: number;
 };
 
 export default function SodoDetailPage() {
@@ -43,8 +41,32 @@ export default function SodoDetailPage() {
   const slug = params.slug as string;
   const { t } = useLocale();
   const [activeTab, setActiveTab] = useState<typeof TAB_KEYS[number]>('about');
+  const [members, setMembers] = useState<Member[]>([]);
+  const [membersLoading, setMembersLoading] = useState(false);
+  const [membersLoaded, setMembersLoaded] = useState(false);
 
-  const sodo = SODO_DATA[slug];
+  const sodo = SODO_STATIC[slug];
+
+  // Fetch members when the members tab is activated (lazy load)
+  useEffect(() => {
+    if (activeTab === 'members' && !membersLoaded) {
+      setMembersLoading(true);
+      fetch(`/api/nim?stateId=${slug}`)
+        .then((res) => res.json())
+        .then((data: Member[]) => {
+          if (Array.isArray(data)) {
+            setMembers(data);
+          }
+          setMembersLoaded(true);
+        })
+        .catch(() => {
+          setMembersLoaded(true);
+        })
+        .finally(() => {
+          setMembersLoading(false);
+        });
+    }
+  }, [activeTab, membersLoaded, slug]);
 
   if (!sodo) {
     return (
@@ -146,31 +168,43 @@ export default function SodoDetailPage() {
         )}
 
         {activeTab === 'members' && (
-          <div className="grid gap-3 md:grid-cols-2">
-            {sodo.members.map((member) => {
-              const [from, to] = getAvatarGradient(member.entityId);
-              return (
-                <Link
-                  key={member.entityId}
-                  href={`/nim/${member.slug}`}
-                  className="flex items-center gap-3 rounded-[10px] bg-wf-cream p-4 transition-shadow hover:shadow-[0_10px_30px_-10px_rgba(27,58,92,0.08)] dark:bg-[#0F1F2E]"
-                >
-                  <div
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                    style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
-                  >
-                    {getAvatarInitial(member.displayName)}
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-sm font-medium text-wf-navy">
-                      {member.displayName} {t('passport.nim')}
-                    </span>
-                    <p className="text-[11px] text-wf-text-faint">@{member.slug}</p>
-                  </div>
-                  <VisaLevel level={member.level} />
-                </Link>
-              );
-            })}
+          <div>
+            {membersLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-wf-celadon border-t-transparent" />
+              </div>
+            ) : members.length === 0 ? (
+              <p className="py-8 text-center text-sm text-wf-text-faint">
+                {t('sodo.no_members')}
+              </p>
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {members.map((member) => {
+                  const [from, to] = getAvatarGradient(member.entityId);
+                  return (
+                    <Link
+                      key={member.entityId}
+                      href={`/nim/${member.slug}`}
+                      className="flex items-center gap-3 rounded-[10px] bg-wf-cream p-4 transition-shadow hover:shadow-[0_10px_30px_-10px_rgba(27,58,92,0.08)] dark:bg-[#0F1F2E]"
+                    >
+                      <div
+                        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                        style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+                      >
+                        {getAvatarInitial(member.displayName)}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-wf-navy">
+                          {member.displayName} {t('passport.nim')}
+                        </span>
+                        <p className="text-[11px] text-wf-text-faint">@{member.slug}</p>
+                      </div>
+                      <VisaLevel level={member.level} />
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -220,6 +220,7 @@ export const en: Record<MessageKey, string> = {
   'sodo.invite': 'Visa Application',
   'sodo.members': 'Members',
   'sodo.no_events': 'No upcoming events.',
+  'sodo.no_members': 'No members yet.',
 
   // Admin
   'admin.title': 'Admin',

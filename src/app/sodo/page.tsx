@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
@@ -9,7 +10,6 @@ const SODO_LIST = [
     nameKey: 'landing.sodo.newmoon' as const,
     locationKey: 'landing.sodo.newmoon_location' as const,
     emoji: '🌙',
-    members: 23,
     active: true,
   },
   {
@@ -17,13 +17,27 @@ const SODO_LIST = [
     nameKey: 'landing.sodo.hwahoe' as const,
     locationKey: 'landing.sodo.hwahoe_location' as const,
     emoji: '🏛',
-    members: 0,
     active: false,
   },
 ];
 
 export default function SodoListPage() {
   const { t } = useLocale();
+  const [stats, setStats] = useState<Record<string, { totalMembers: number; totalVisas: number; pendingRequests: number }>>({});
+
+  useEffect(() => {
+    // Fetch stats for active sodo only
+    SODO_LIST.filter((s) => s.active).forEach((sodo) => {
+      fetch(`/api/admin/stats?stateId=${sodo.slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setStats((prev) => ({ ...prev, [sodo.slug]: data }));
+        })
+        .catch(() => {
+          // silently fail, will show fallback
+        });
+    });
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col px-4 py-14">
@@ -57,7 +71,7 @@ export default function SodoListPage() {
                 </div>
                 <div className="flex items-center justify-between border-t border-wf-border pt-3">
                   <span className="text-xs text-wf-text-faint">
-                    {t('sodo.members_count')}: <strong className="text-wf-navy">{sodo.members}</strong>
+                    {t('sodo.members_count')}: <strong className="text-wf-navy">{stats[sodo.slug]?.totalVisas ?? '–'}</strong>
                   </span>
                   <span className="rounded-full bg-wf-celadon/10 px-2 py-0.5 text-[10px] font-bold text-wf-celadon">
                     {t('common.active')}

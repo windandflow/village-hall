@@ -1,17 +1,55 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import { getAvatarGradient, getAvatarInitial } from '@/lib/utils/avatar';
 
-const FEATURED_NIMS = [
-  { name: '범선', handle: '@bumsun', initial: '범', gradient: 'from-[#8BBFBC] to-[#6BA3A0]' },
-  { name: '한석', handle: '@hahnryu', initial: '한', gradient: 'from-[#C4A265] to-[#D4B275]' },
-  { name: '지연', handle: '@jiyeon', initial: '지', gradient: 'from-[#7AA3C4] to-[#8AB3D4]' },
-  { name: '희문', handle: '@heemun', initial: '희', gradient: 'from-[#A4C47A] to-[#B4D48A]' },
-];
+interface NimEntry {
+  entityId: string;
+  displayName: string;
+  slug: string;
+  bio?: string;
+  level: number;
+  stateId: string;
+}
+
+interface SodoStats {
+  totalMembers: number;
+  totalVisas: number;
+  totalElders: number;
+}
 
 export default function HomePage() {
   const { t } = useLocale();
+
+  const [nims, setNims] = useState<NimEntry[]>([]);
+  const [nimsLoading, setNimsLoading] = useState(true);
+
+  const [stats, setStats] = useState<SodoStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/nim?stateId=newmoon')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: NimEntry[]) => setNims(data.slice(0, 8)))
+      .catch(() => setNims([]))
+      .finally(() => setNimsLoading(false));
+
+    fetch('/api/admin/stats?stateId=newmoon')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && !data.error) {
+          setStats({
+            totalMembers: data.totalMembers ?? 0,
+            totalVisas: data.totalVisas ?? 0,
+            totalElders: data.totalElders ?? 0,
+          });
+        }
+      })
+      .catch(() => setStats(null))
+      .finally(() => setStatsLoading(false));
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -114,19 +152,37 @@ export default function HomePage() {
                   <p className="text-[10px] text-wf-text-faint">
                     {t('landing.sodo.stat_members')}
                   </p>
-                  <p className="font-bold text-wf-navy">23</p>
+                  {statsLoading ? (
+                    <div className="mx-auto mt-1 h-5 w-8 animate-pulse rounded bg-wf-border" />
+                  ) : (
+                    <p className="font-bold text-wf-navy">
+                      {stats?.totalMembers ?? '—'}
+                    </p>
+                  )}
                 </div>
                 <div className="border-x border-wf-navy/5 text-center">
                   <p className="text-[10px] text-wf-text-faint">
                     {t('landing.sodo.stat_residents')}
                   </p>
-                  <p className="font-bold text-wf-navy">18</p>
+                  {statsLoading ? (
+                    <div className="mx-auto mt-1 h-5 w-8 animate-pulse rounded bg-wf-border" />
+                  ) : (
+                    <p className="font-bold text-wf-navy">
+                      {stats?.totalVisas ?? '—'}
+                    </p>
+                  )}
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] text-wf-text-faint">
                     {t('landing.sodo.stat_elders')}
                   </p>
-                  <p className="font-bold text-wf-navy">3</p>
+                  {statsLoading ? (
+                    <div className="mx-auto mt-1 h-5 w-8 animate-pulse rounded bg-wf-border" />
+                  ) : (
+                    <p className="font-bold text-wf-navy">
+                      {stats?.totalElders ?? '—'}
+                    </p>
+                  )}
                 </div>
               </div>
             </Link>
@@ -164,25 +220,42 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="flex gap-4 overflow-x-auto pb-4 md:gap-6">
-            {FEATURED_NIMS.map((nim) => (
-              <Link
-                key={nim.handle}
-                href={`/nim/${nim.handle.slice(1)}`}
-                className="flex flex-shrink-0 flex-col items-center"
-              >
-                <div
-                  className={`flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br ${nim.gradient} mb-2 border-2 border-white text-lg font-bold text-white shadow-sm dark:border-wf-border`}
-                >
-                  {nim.initial}
+            {nimsLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex flex-shrink-0 flex-col items-center">
+                  <div className="mb-2 h-16 w-16 animate-pulse rounded-full bg-wf-border" />
+                  <div className="mt-1 h-3 w-12 animate-pulse rounded bg-wf-border" />
+                  <div className="mt-1 h-2.5 w-10 animate-pulse rounded bg-wf-border" />
                 </div>
-                <span className="text-[11px] font-medium text-wf-navy">
-                  {nim.name} {t('passport.nim')}
-                </span>
-                <span className="text-[10px] text-wf-text-faint">
-                  {nim.handle}
-                </span>
-              </Link>
-            ))}
+              ))
+            ) : (
+              nims.map((nim) => {
+                const [from, to] = getAvatarGradient(nim.entityId);
+                const initial = getAvatarInitial(nim.displayName);
+                return (
+                  <Link
+                    key={nim.entityId}
+                    href={`/nim/${nim.slug}`}
+                    className="flex flex-shrink-0 flex-col items-center"
+                  >
+                    <div
+                      className="mb-2 flex h-16 w-16 items-center justify-center rounded-full border-2 border-white text-lg font-bold text-white shadow-sm dark:border-wf-border"
+                      style={{
+                        background: `linear-gradient(to bottom right, ${from}, ${to})`,
+                      }}
+                    >
+                      {initial}
+                    </div>
+                    <span className="text-[11px] font-medium text-wf-navy">
+                      {nim.displayName} {t('passport.nim')}
+                    </span>
+                    <span className="text-[10px] text-wf-text-faint">
+                      @{nim.slug}
+                    </span>
+                  </Link>
+                );
+              })
+            )}
             {/* Join placeholder */}
             <Link
               href="/sodo/newmoon"

@@ -218,6 +218,7 @@ export const ko = {
   'sodo.invite': '비자 발급 신청',
   'sodo.members': '구성원',
   'sodo.no_events': '예정된 이벤트가 없습니다.',
+  'sodo.no_members': '아직 멤버가 없습니다.',
 
   // Admin
   'admin.title': '관리',

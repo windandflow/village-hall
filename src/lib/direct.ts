@@ -389,11 +389,13 @@ export async function getAdminStats(stateId: string) {
     { count: totalVisas },
     { count: pendingRequests },
     { count: totalPosts },
+    { count: totalElders },
   ] = await Promise.all([
     client.from('passports').select('*', { count: 'exact', head: true }),
     client.from('visas').select('*', { count: 'exact', head: true }).eq('state_id', stateId).eq('status', 'active'),
     client.from('invite_requests').select('*', { count: 'exact', head: true }).eq('state_id', stateId).eq('status', 'pending'),
     client.from('posts').select('*', { count: 'exact', head: true }).eq('state_id', stateId),
+    client.from('visas').select('*', { count: 'exact', head: true }).eq('state_id', stateId).eq('status', 'active').gte('level', 4),
   ]);
 
   return {
@@ -401,6 +403,7 @@ export async function getAdminStats(stateId: string) {
     totalVisas: totalVisas || 0,
     pendingRequests: pendingRequests || 0,
     totalPosts: totalPosts || 0,
+    totalElders: totalElders || 0,
   };
 }
 
