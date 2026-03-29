@@ -65,6 +65,28 @@ export async function listInviteRequests(stateId: string) {
   return data;
 }
 
+// ─── Invite Request Actions ──────────────────────────────────────────────────
+
+export async function updateInviteRequestStatus(
+  requestId: string,
+  status: 'approved' | 'rejected',
+  reviewedBy: string,
+) {
+  const client = getServiceClient();
+  const { data, error } = await client
+    .from('invite_requests')
+    .update({
+      status,
+      reviewed_by: reviewedBy,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq('request_id', requestId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 // ─── Posts ────────────────────────────────────────────────────────────────────
 
 // TODO: posts CRUD (SDK 업데이트 후 교체)

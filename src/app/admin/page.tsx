@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { VisaLevel } from '@/components/visa/VisaLevel';
@@ -40,7 +40,7 @@ interface InviteRequest {
 }
 
 export default function AdminPage() {
-  const { authenticated, login, loading } = useAuth();
+  const { entityId, authenticated, login, loading } = useAuth();
   const { t } = useLocale();
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [stats, setStats] = useState<Stats | null>(null);
@@ -48,8 +48,9 @@ export default function AdminPage() {
   const [requests, setRequests] = useState<InviteRequest[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     if (!authenticated) return;
+    setDataLoading(true);
     Promise.all([
       fetch('/api/admin/stats?stateId=newmoon').then((r) => r.json()),
       fetch('/api/admin/members?stateId=newmoon').then((r) => r.json()),
@@ -63,6 +64,25 @@ export default function AdminPage() {
       .catch(() => {})
       .finally(() => setDataLoading(false));
   }, [authenticated]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  async function handleRequestAction(requestId: string, status: 'approved' | 'rejected') {
+    try {
+      const res = await fetch('/api/admin/invite-requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId, status, reviewedBy: entityId }),
+      });
+      if (res.ok) {
+        loadData();
+      }
+    } catch {
+      // silent
+    }
+  }
 
   if (loading) {
     return (
@@ -186,11 +206,19 @@ export default function AdminPage() {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="rounded-lg bg-wf-celadon px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80">
-                            {t('admin.approve')}
+                          <button
+                            onClick={() => handleRequestAction(req.request_id, 'approved')}
+                            disabled={req.status !== 'pending'}
+                            className="rounded-lg bg-wf-celadon px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-40"
+                          >
+                            {req.status === 'approved' ? '✓' : t('admin.approve')}
                           </button>
-                          <button className="rounded-lg border border-wf-border px-3 py-1.5 text-xs text-wf-text-faint transition-colors hover:bg-wf-warm">
-                            {t('admin.reject')}
+                          <button
+                            onClick={() => handleRequestAction(req.request_id, 'rejected')}
+                            disabled={req.status !== 'pending'}
+                            className="rounded-lg border border-wf-border px-3 py-1.5 text-xs text-wf-text-faint transition-colors hover:bg-wf-warm disabled:opacity-40"
+                          >
+                            {req.status === 'rejected' ? '✕' : t('admin.reject')}
                           </button>
                         </div>
                       </div>
