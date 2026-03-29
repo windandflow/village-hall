@@ -14,6 +14,8 @@ export const en: Record<MessageKey, string> = {
   'common.all': 'All →',
   'common.join': 'Join',
   'common.active': 'Active',
+  'common.error': 'Something went wrong. Please refresh.',
+  'common.retry': 'Retry',
 
   // Nav
   'nav.about': 'About',

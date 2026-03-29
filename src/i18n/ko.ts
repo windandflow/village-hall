@@ -12,6 +12,8 @@ export const ko = {
   'common.all': '전체 →',
   'common.join': '참여하기',
   'common.active': 'Active',
+  'common.error': '문제가 발생했습니다. 새로고침 해주세요.',
+  'common.retry': '다시 시도',
 
   // Nav
   'nav.about': '소개',

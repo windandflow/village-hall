@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { VisaLevel } from '@/components/visa/VisaLevel';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 type AdminTab = 'dashboard' | 'members' | 'content' | 'requests' | 'reports';
 
@@ -47,10 +48,12 @@ export default function AdminPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [requests, setRequests] = useState<InviteRequest[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState(false);
 
   const loadData = useCallback(() => {
     if (!authenticated) return;
     setDataLoading(true);
+    setDataError(false);
     Promise.all([
       fetch('/api/admin/stats?stateId=newmoon').then((r) => r.json()),
       fetch('/api/admin/members?stateId=newmoon').then((r) => r.json()),
@@ -61,7 +64,7 @@ export default function AdminPage() {
         setMembers(Array.isArray(m) ? m : []);
         setRequests(Array.isArray(r) ? r : []);
       })
-      .catch(() => {})
+      .catch(() => setDataError(true))
       .finally(() => setDataLoading(false));
   }, [authenticated]);
 
@@ -132,6 +135,8 @@ export default function AdminPage() {
           <div className="flex justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
           </div>
+        ) : dataError ? (
+          <ErrorMessage onRetry={loadData} />
         ) : (
           <>
             {/* Dashboard */}

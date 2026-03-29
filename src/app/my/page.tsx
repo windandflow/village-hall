@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { PassportCover } from '@/components/passport/PassportCover';
 import { PassportBooklet } from '@/components/passport/PassportBooklet';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 interface ProfileData {
   entityId: string;
@@ -26,15 +27,22 @@ export default function MyPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState(false);
 
-  useEffect(() => {
+  function loadProfile() {
     if (!entityId) return;
     setProfileLoading(true);
+    setProfileError(false);
     fetch(`/api/profile?entityId=${entityId}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setProfile(data))
-      .catch(() => setProfile(null))
+      .catch(() => setProfileError(true))
       .finally(() => setProfileLoading(false));
+  }
+
+  useEffect(() => {
+    loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityId]);
 
   if (loading || profileLoading) {
@@ -66,6 +74,14 @@ export default function MyPage() {
         >
           {t('my.issue_passport')}
         </Link>
+      </div>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center py-20">
+        <ErrorMessage onRetry={loadProfile} />
       </div>
     );
   }

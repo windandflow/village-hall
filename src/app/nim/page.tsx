@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { getAvatarGradient, getAvatarInitial } from '@/lib/utils/avatar';
 import { VisaLevel } from '@/components/visa/VisaLevel';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 interface NimEntry {
   entityId: string;
@@ -20,13 +21,20 @@ export default function NimDirectoryPage() {
   const [search, setSearch] = useState('');
   const [nims, setNims] = useState<NimEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  function loadNims() {
+    setLoading(true);
+    setError(false);
     fetch('/api/nim?stateId=newmoon')
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => setNims(data))
-      .catch(() => setNims([]))
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    loadNims();
   }, []);
 
   const filtered = nims.filter(
@@ -60,6 +68,8 @@ export default function NimDirectoryPage() {
           <div className="flex justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-wf-navy border-t-transparent" />
           </div>
+        ) : error ? (
+          <ErrorMessage onRetry={loadNims} />
         ) : filtered.length === 0 ? (
           <p className="text-center text-sm text-wf-text-faint">
             {search ? t('nim.no_results') : t('nim.empty')}

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 interface Invitation {
   invitation_id: string;
@@ -20,13 +21,16 @@ export default function MyInvitePage() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState(false);
 
   const loadInvitations = useCallback(() => {
     if (!entityId) return;
+    setDataLoading(true);
+    setError(false);
     fetch(`/api/invitation?entityId=${entityId}`)
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => setInvitations(data))
-      .catch(() => setInvitations([]))
+      .catch(() => setError(true))
       .finally(() => setDataLoading(false));
   }, [entityId]);
 
@@ -52,6 +56,14 @@ export default function MyInvitePage() {
         >
           {t('common.login')}
         </button>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center py-20">
+        <ErrorMessage onRetry={loadInvitations} />
       </div>
     );
   }
