@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { getAvatarGradient, getAvatarInitial } from '@/lib/utils/avatar';
+import { VisaStamp } from '@/components/visa/VisaStamp';
 import type { MessageKey } from '@/i18n';
 
 interface PassportData {
@@ -168,22 +169,15 @@ function PageVisa({
       {!visas || visas.length === 0 ? (
         <p className="text-sm text-wf-text-faint">{t('passport.no_visa')}</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {visas.map((v) => (
-            <div
+            <VisaStamp
               key={v.stateId}
-              className="rounded-lg bg-wf-warm p-4 dark:bg-[#0A1628]"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-wf-navy">{v.stateName}</span>
-                <span className="rounded-full bg-wf-celadon/10 px-2 py-0.5 text-[10px] font-bold text-wf-celadon">
-                  L{v.level} {v.levelLabel}
-                </span>
-              </div>
-              <p className="mt-1 text-[11px] text-wf-text-faint">
-                {t('passport.joined')} {v.joinedAt}
-              </p>
-            </div>
+              stateName={v.stateName}
+              level={v.level}
+              levelLabel={v.levelLabel}
+              joinedAt={v.joinedAt}
+            />
           ))}
         </div>
       )}
