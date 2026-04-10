@@ -171,7 +171,9 @@ export const en: Record<MessageKey, string> = {
   'onboarding.sign.button': 'Sign',
   'onboarding.sign.signing': 'Signing...',
   'onboarding.sign.success': 'Pledge completed.',
-  'onboarding.sign.next': 'Get Passport',
+  'onboarding.sign.minting': 'Issuing your passport...',
+  'onboarding.sign.next': 'View My Passport',
+  'passport.view_record': 'View Record',
 
   // Invite
   'invite.title': 'My Invitations',

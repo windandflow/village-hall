@@ -169,7 +169,9 @@ export const ko = {
   'onboarding.sign.button': '서명하기',
   'onboarding.sign.signing': '서명 중...',
   'onboarding.sign.success': '서약이 완료되었습니다.',
-  'onboarding.sign.next': '여권 발급으로',
+  'onboarding.sign.minting': '여권을 발급하고 있습니다...',
+  'onboarding.sign.next': '내 여권 보기',
+  'passport.view_record': '기록 확인',
 
   // Invite
   'invite.title': '초대장 관리',
